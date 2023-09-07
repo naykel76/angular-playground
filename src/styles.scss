@@ -1,1 +1,53 @@
-/* You can add global styles to this file, and also import other style files */
+$x-font-family: Poppins, Helvetica, Arial, sans-serif;
+
+// $x-text: #05070a;
+// $x-background: #e4e9f1;
+// $x-primary: #cea1c9;
+// $x-secondary: #e3d9ca;
+// $x-accent: #4d9354;
+
+// $text: #110f03;
+// $background: #f9f4dc;
+// $primary: #e7d579;
+// $secondary: #f4ebbe;
+// $accent: #c3a822;
+
+$x-text: #26042a;
+$x-background: #fdf6fe;
+$x-primary: #af126e;
+$x-secondary: #f5a3aa;
+$x-accent: #b91321;
+
+@use "node_modules/nk_jtb/src/base/vars_base" as * with (
+    $primary: $x-primary,
+    $secondary: $x-secondary,
+    $accent: $x-accent,
+    $background: $x-background,
+    $font-family: $x-font-family,
+    $text: $x-text
+);
+
+@use "node_modules/nk_jtb/src/scss/base/vars_components" as * with (
+    $menu-hover-bg: #141925,
+    $navbar-bg: black,
+    $navbar-nav-active-color: #ffbb1c,
+    $navbar-nav-hover-color: #ffbb1c,
+    $navbar-padding-y: 1rem
+);
+
+@use "node_modules/nk_jtb/src/jtb";
+
+.txt-gradient {
+    background-image: linear-gradient(to bottom right, teal, purple, coral);
+    background-clip: text;
+    color: transparent;
+}
+
+// .ng-valid[required],
+// .ng-valid.required {
+//     border-left: 5px solid #42a948; /* green */
+// }
+
+.ng-invalid:not(form):not(.ng-pristine) {
+    border-color: #a94442;
+}
