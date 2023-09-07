@@ -1,7 +1,11 @@
 <div class="navbar flex space-between ha-c">
     <logo class="h-3" title="Angular Playground" />
+    <nav>
+        <ul class="space-x">
+            <li><a routerLink="/home"> Home </a></li>
+        </ul>
+    </nav>
+
 </div>
 
-<div class="container py-5-3-2-2">
-    <router-outlet></router-outlet>
-</div>
+<router-outlet></router-outlet>
