@@ -60,13 +60,13 @@ export class BoardComponent {
     onKeydown(event: KeyboardEvent): void {
         if (this.moves[event.key]) {
             event.preventDefault();
-            // decompose the updated piece into its matrix, x, and y
-            const { matrix, x, y } = this.moves[event.key](this.piece);
+            // decompose the updated piece into its shape, x, and y
+            const { shape, x, y } = this.moves[event.key](this.piece);
             // check if the piece can move to the new position
-            const canMove = this.gameService.canMove(matrix, { x, y });
+            const canMove = this.gameService.canMove(shape, { x, y });
 
             if (canMove) {
-                this.pieceService.move(matrix, { x, y });
+                this.pieceService.move(shape, { x, y });
             }
         }
     }

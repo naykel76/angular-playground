@@ -16,9 +16,9 @@ export class GameService {
         return this.gridSubject$.asObservable();
     }
 
-    canMove(matrix: Matrix, position: IPosition): boolean {
-        // `matrix.every` checks if every row of the shape meets the conditions
-        return matrix.every((row, rowIndex) => {
+    canMove(shape: Matrix, position: IPosition): boolean {
+        // `shape.every` checks if every row of the shape meets the conditions
+        return shape.every((row, rowIndex) => {
             // `row.every` checks if every value (cell) in the row meets the conditions.
             return row.every((value, columnIndex) => {
                 // Calculate the actual x and y position on the board for this cell

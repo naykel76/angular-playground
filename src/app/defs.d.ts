@@ -18,7 +18,7 @@ export interface IConfig {
 
 export interface ITetromino {
     id?: number;
-    matrix: Matrix;
+    shape: Matrix;
     color: string;
 }
 

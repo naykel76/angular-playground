@@ -5,7 +5,7 @@ export class Piece implements IPiece {
 
     public x: number;
     public y: number = 0;
-    public matrix: Matrix;
+    public shape: Matrix;
     public color: string;
 
     constructor(
@@ -14,16 +14,16 @@ export class Piece implements IPiece {
         private config: IConfig = CONFIG,
         public type: string = 'current'
     ) {
-        this.matrix = tetromino.matrix;
+        this.shape = tetromino.shape;
         this.color = tetromino.color;
-        this.x = this.centerXPosition(this.matrix);
+        this.x = this.centerXPosition(this.shape);
         this.render();
     }
 
-    move(matrix: Matrix, position: IPosition): void {
+    move(shape: Matrix, position: IPosition): void {
         this.x = position.x;
         this.y = position.y;
-        this.matrix = matrix;
+        this.shape = shape;
         this.clear();
         this.render();
     }
@@ -34,30 +34,33 @@ export class Piece implements IPiece {
 
     private render() {
         this.ctx!.fillStyle = this.color;
-        this.matrix.forEach((row, y) => {
-            row.forEach((value, x) => {
-                if (value > 0) {
-                    this.ctx!.fillRect(this.x + x, this.y + y, 1, 1);
+        this.shape.forEach((row, rowIndex) => {
+            // tetVal represents the tetromino value. I=1, J=2, ... Z=7
+            row.forEach((tetVal, columnIndex) => {
+                if (tetVal > 0) {
+                    const x = this.x + columnIndex;
+                    const y = this.y + rowIndex;
+                    this.ctx!.fillRect(x, y, 1, 1);
                 }
             });
         });
     }
 
-    private centerXPosition(matrix: Matrix): number {
+    private centerXPosition(shape: Matrix): number {
         const columns = this.type === 'next'
             ? this.config.nextGridSize
             : this.config.columns;
-        return Math.floor((columns! - this.calculateMaxWidth(matrix)) / 2);
+        return Math.floor((columns! - this.calculateMaxWidth(shape)) / 2);
     }
 
-    private calculateMaxWidth(matrix: Matrix): number {
+    private calculateMaxWidth(shape: Matrix): number {
         let maxWidth = 0;
 
-        for (let row = 0; row < matrix.length; row++) {
+        for (let row = 0; row < shape.length; row++) {
             let rowWidth = 0;
 
-            for (let col = 0; col < matrix[row].length; col++) {
-                if (matrix[row][col] > 0) {
+            for (let col = 0; col < shape[row].length; col++) {
+                if (shape[row][col] > 0) {
                     rowWidth = col + 1; // Increment the row width when a non-zero value is encountered
                 }
             }
