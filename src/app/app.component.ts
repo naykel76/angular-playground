@@ -1,5 +1,5 @@
+import { AppLayout } from './views/layouts/app-layout.component';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { AppLayout } from './layouts/app-layout.component';
 import { Logo } from './components/logo.component';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
