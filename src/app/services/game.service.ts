@@ -34,11 +34,12 @@ export class GameService {
         // `shape.every` checks if every row of the shape meets the conditions
         return shape.every((row, rowIndex) => {
             // `row.every` checks if every value (cell) in the row meets the conditions.
-            return row.every((value, columnIndex) => {
-                // Calculate the actual x and y position on the board for this cell
+            return row.every((tetVal, columnIndex) => {
+                // Calculate the actual x and y position on the grid for this cell
                 let x = position.x + columnIndex;
                 let y = position.y + rowIndex;
-                return this.isEmpty(value) || this.isInBoundary({ x, y });
+                return tetVal === 0 ||
+                    this.isInBoundary({ x, y }) && this.isVacant(x, y);
             });
         });
     }
@@ -49,7 +50,9 @@ export class GameService {
             && position.y < this.config.rows;
     }
 
-    isEmpty(value: number): boolean {
-        return value === 0;
+    private isVacant(x: number, y: number): boolean {
+        const grid = this.gridSubject$.value;
+        // this hurts my brain, why is y and x reversed?
+        return grid![x] && grid![y][x] === 0;
     }
 }
