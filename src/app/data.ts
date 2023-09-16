@@ -1,9 +1,9 @@
 import { IConfig, IGameStats, ITetromino, Matrix } from "./defs";
 
-export const DEFAULT_CONFIG: IConfig = {
+export const CONFIG: IConfig = {
     rows: 20,
     columns: 10,
-    blockSize: 20,
+    blockSize: 25,
     extended: false,
     startLevel: 1,
     nextGridSize: 4

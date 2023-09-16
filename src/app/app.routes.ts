@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'board', pathMatch: 'full' },
+    { path: '', redirectTo: 'game', pathMatch: 'full' },
     {
-        path: 'board', loadComponent: () => import('./game/board.component')
-            .then(mod => mod.BoardComponent)
+        path: 'game', loadComponent: () => import('./pages/game.component')
+            .then(mod => mod.GameComponent)
     },
 ];
