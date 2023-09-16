@@ -16,6 +16,20 @@ export class GameService {
         return this.gridSubject$.asObservable();
     }
 
+    renderGrid(ctx: CanvasRenderingContext2D) {
+        const grid = this.gridSubject$.value;
+        grid!.forEach((row, y) => {
+            // tetVal represents the tetromino value. I = 1, J=2 ... Z=7
+            row.forEach((tetVal, x) => {
+                if (tetVal > 0) {
+                    const tetromino = Object.values(TETROMINOS).find(t => t.id === tetVal);
+                    ctx.fillStyle = tetromino!.color;
+                    ctx.fillRect(x, y, 1, 1);
+                }
+            });
+        });
+    }
+
     canMove(shape: Matrix, position: IPosition): boolean {
         // `shape.every` checks if every row of the shape meets the conditions
         return shape.every((row, rowIndex) => {

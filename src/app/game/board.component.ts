@@ -3,9 +3,9 @@ import { AppLayout } from '../views/layouts/app-layout.component';
 import { PieceService } from '../services/piece.service';
 import { GameService } from '../services/game.service';
 import { CommonModule } from '@angular/common';
+import { IConfig, Matrix } from '../defs';
 import { Canvas } from '../models/Canvas';
 import { Piece } from '../models/Piece';
-import { IConfig } from '../defs';
 
 @Component({
     selector: 'app-board',
@@ -28,6 +28,7 @@ export class BoardComponent {
     ngOnInit(): void {
         this.initBoard();
         this.subscribeToPiece();
+        this.subscribeToGrid();
     }
 
     private initBoard(): void {
@@ -41,6 +42,12 @@ export class BoardComponent {
     private subscribeToPiece(): void {
         this.pieceService.observePiece().subscribe((piece: Piece | null) => {
             this.piece = piece;
+        });
+    }
+
+    private subscribeToGrid(): void {
+        this.gameService.observeGrid().subscribe((grid: Matrix | null) => {
+            this.gameService.renderGrid(this.ctx!);
         });
     }
 
@@ -67,8 +74,9 @@ export class BoardComponent {
 
             if (canMove) {
                 this.pieceService.move(shape, { x, y });
+                // redraw the grid after each moved to maintain the grid state
+                this.gameService.renderGrid(this.ctx!);
             }
         }
     }
-
 }
