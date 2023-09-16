@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, Input, ViewChild, inject } from '@angular/core';
 import { AppLayout } from '../views/layouts/app-layout.component';
 import { PieceService } from '../services/piece.service';
+import { GameService } from '../services/game.service';
 import { CommonModule } from '@angular/common';
 import { Canvas } from '../models/Canvas';
 import { Piece } from '../models/Piece';
@@ -22,6 +23,7 @@ export class BoardComponent {
     private piece!: Piece | null;
 
     private pieceService = inject(PieceService);
+    private gameService = inject(GameService);
 
     ngOnInit(): void {
         this.initBoard();
@@ -46,6 +48,7 @@ export class BoardComponent {
         ArrowLeft: (piece: Piece) => ({ ...piece, x: piece.x - 1 }),
         ArrowRight: (piece: Piece) => ({ ...piece, x: piece.x + 1 }),
         ArrowDown: (piece: Piece) => ({ ...piece, y: piece.y + 1 }),
+        ArrowUp: (piece: Piece) => ({ ...piece, y: piece.y - 1 }),
     };
 
     /**
@@ -57,9 +60,14 @@ export class BoardComponent {
     onKeydown(event: KeyboardEvent): void {
         if (this.moves[event.key]) {
             event.preventDefault();
-            console.log(event.key);
-            // this will log the callback function as a string
-            console.log(this.moves[event.key]);
+            // decompose the updated piece into its matrix, x, and y
+            const { matrix, x, y } = this.moves[event.key](this.piece);
+            // check if the piece can move to the new position
+            const canMove = this.gameService.canMove(matrix, { x, y });
+
+            if (canMove) {
+                this.pieceService.move(matrix, { x, y });
+            }
         }
     }
 

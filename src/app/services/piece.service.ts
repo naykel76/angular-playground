@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { IConfig, IPosition, Matrix } from '../defs';
 import { Injectable } from '@angular/core';
 import { Piece } from '../models/Piece';
-import { IConfig } from '../defs';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -24,5 +24,11 @@ export class PieceService {
         const piece = new Piece(ctx, p, this.config);
         this.pieceSubject$.next(piece); // update the subject
         return piece;
+    }
+
+    move(matrix: Matrix, position: IPosition) {
+        const currentPiece = this.pieceSubject$.value;
+        currentPiece?.move(matrix, position);
+        this.pieceSubject$.next(currentPiece); // Update the subject
     }
 }
