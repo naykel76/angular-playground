@@ -2,8 +2,8 @@ import { Component, ElementRef, HostListener, Input, ViewChild, inject } from '@
 import { AppLayout } from '../views/layouts/app-layout.component';
 import { PieceService } from '../services/piece.service';
 import { GameService } from '../services/game.service';
+import { IConfig, IPosition, Matrix } from '../defs';
 import { CommonModule } from '@angular/common';
-import { IConfig, Matrix } from '../defs';
 import { Canvas } from '../models/Canvas';
 import { Piece } from '../models/Piece';
 
@@ -57,37 +57,6 @@ export class BoardComponent {
         });
     }
 
-    private moves: any = {
-        ArrowLeft: (piece: Piece) => ({ ...piece, x: piece.x - 1 }),
-        ArrowRight: (piece: Piece) => ({ ...piece, x: piece.x + 1 }),
-        ArrowDown: (piece: Piece) => ({ ...piece, y: piece.y + 1 }),
-        ArrowUp: (piece: Piece) => ({ ...piece, y: piece.y - 1 }),
-    };
-
-    /**
-     * Handle the keydown event and call the moves object, which accepts
-     * the current piece and uses a callback to return the updated position
-     * in the selected direction or rotation.
-     */
-    @HostListener('document:keydown', ['$event'])
-    onKeydown(event: KeyboardEvent): void {
-        if (this.moves[event.key]) {
-            event.preventDefault();
-            // decompose the updated piece into its shape, x, and y
-            const { shape, x, y } = this.moves[event.key](this.piece);
-            // check if the piece can move to the new position
-            const canMove = this.gameService.canMove(shape, { x, y });
-
-            if (canMove) {
-                this.pieceService.move(shape, { x, y });
-                // redraw the grid after each moved to maintain the grid state
-                this.gameService.renderGrid(this.ctx!);
-            }
-        }
-    }
-
-
-
     /**
      * Start a periodic interval with a specified time interval. The time is
      * based on the level of the game. The higher the level, the faster the
@@ -112,15 +81,52 @@ export class BoardComponent {
         }
     }
 
-    private drop() {
-        let updatedPiece = this.moves["ArrowDown"](this.piece);
-        let { shape, x, y } = updatedPiece;
-        let canMove = this.gameService.canMove(shape, { x, y });
-        if (canMove) {
-            this.pieceService.move(shape, { x, y });
-            // redraw the grid after each moved to maintain the grid state
-            this.gameService.renderGrid(this.ctx!);
+    private moves: any = {
+        ArrowLeft: (piece: Piece) => ({ ...piece, x: piece.x - 1 }),
+        ArrowRight: (piece: Piece) => ({ ...piece, x: piece.x + 1 }),
+        ArrowDown: (piece: Piece) => ({ ...piece, y: piece.y + 1 }),
+        ArrowUp: (piece: Piece) => ({ ...piece, y: piece.y - 1 }),
+    };
+
+    /**
+     * Handle the keydown event and call the moves object, which accepts
+     * the current piece and uses a callback to return the updated position
+     * in the selected direction or rotation.
+     */
+    @HostListener('document:keydown', ['$event'])
+    onKeydown(event: KeyboardEvent): void {
+        if (this.moves[event.key]) {
+            event.preventDefault();
+            // decompose the updated piece into its shape, x, and y
+            const { shape, x, y } = this.moves[event.key](this.piece);
+            // if the piece can move to the new position
+            if (this.gameService.canMove(shape, { x, y })) {
+                this.moveAndRenderGrid(shape, { x, y });
+            }
         }
     }
 
+    /**
+     * Move the piece to the new position and render the grid
+     * @param {Matrix} shape The shape of the piece
+     * @param {IPosition} position The new position of the piece
+     */
+    private moveAndRenderGrid(shape: Matrix, position: IPosition): void {
+        this.pieceService.move(shape, { x: position.x, y: position.y });
+        this.gameService.renderGrid(this.ctx!);
+    }
+
+    /**
+     * Drop the piece down one row if it can move. If it can't move, lock the
+     * piece in place.
+     */
+    private drop(): void {
+        const { shape, x, y } = this.moves["ArrowDown"](this.piece);
+        if (this.gameService.canMove(shape, { x, y })) {
+            this.moveAndRenderGrid(shape, { x, y });
+        } else {
+            // make sure you pass in the 'current' position to be locked in!
+            this.gameService.lock(shape, { x: this.piece?.x || 0, y: this.piece?.y || 0 });
+        }
+    }
 }
