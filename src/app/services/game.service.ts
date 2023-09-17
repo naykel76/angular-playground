@@ -68,4 +68,14 @@ export class GameService {
         // this hurts my brain, why is y and x reversed?
         return grid![x] && grid![y][x] === 0;
     }
+
+    clearRows(): void {
+        const grid = this.gridSubject$.value;
+        grid!.forEach((row, y) => {
+            if (row.every(cell => cell > 0)) {
+                grid!.splice(y, 1);
+                grid!.unshift(Array(this.config.columns).fill(0));
+            }
+        });
+    }
 }

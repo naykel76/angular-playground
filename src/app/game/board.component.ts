@@ -128,6 +128,9 @@ export class BoardComponent {
             // make sure you pass in the 'current' position to be locked in!
             this.gameService.lock(shape, { x: this.piece?.x || 0, y: this.piece?.y || 0 });
             this.piece = this.pieceService.getPiece(this.ctx!);
+            // this is jittery, but it works. The new piece and clearing of
+            // rows needs to happen at the same time
+            this.gameService.clearRows();
         }
     }
 }
