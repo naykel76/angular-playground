@@ -63,7 +63,7 @@ export class BoardComponent {
      * interval.
      * @param {number} time The time interval in milliseconds
      */
-    private startInterval(time: number = 900): void {
+    private startInterval(time: number = 400): void {
         if (!this.intervalId) {
             this.intervalId = setInterval(() => {
                 this.drop();
@@ -127,6 +127,7 @@ export class BoardComponent {
         } else {
             // make sure you pass in the 'current' position to be locked in!
             this.gameService.lock(shape, { x: this.piece?.x || 0, y: this.piece?.y || 0 });
+            this.piece = this.pieceService.getPiece(this.ctx!);
         }
     }
 }

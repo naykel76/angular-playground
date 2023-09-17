@@ -2,6 +2,7 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { IConfig, IPosition, Matrix } from '../defs';
 import { Injectable } from '@angular/core';
 import { Piece } from '../models/Piece';
+import { TETROMINOS } from '../data';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -19,8 +20,9 @@ export class PieceService {
     }
 
     getPiece(ctx: CanvasRenderingContext2D): Piece {
-        // create a simple square piece
-        const p = { id: 1, shape: [[1]], color: 'rgba(0, 128, 128, 1)' }
+        const shapeKeys = Object.keys(TETROMINOS);
+        const randomIndex = Math.floor(Math.random() * shapeKeys.length);
+        const p = TETROMINOS[shapeKeys[randomIndex]];
         const piece = new Piece(ctx, p, this.config);
         this.pieceSubject$.next(piece); // update the subject
         return piece;
