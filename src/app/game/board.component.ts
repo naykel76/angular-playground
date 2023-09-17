@@ -22,6 +22,11 @@ export class BoardComponent {
     ctx: CanvasRenderingContext2D | null = null;
     private piece!: Piece | null;
 
+    /**
+     * Property to store the ID of the interval
+     */
+    private intervalId?: any;
+
     private pieceService = inject(PieceService);
     private gameService = inject(GameService);
 
@@ -29,6 +34,7 @@ export class BoardComponent {
         this.initBoard();
         this.subscribeToPiece();
         this.subscribeToGrid();
+        this.startInterval();
     }
 
     private initBoard(): void {
@@ -79,4 +85,42 @@ export class BoardComponent {
             }
         }
     }
+
+
+
+    /**
+     * Start a periodic interval with a specified time interval. The time is
+     * based on the level of the game. The higher the level, the faster the
+     * interval.
+     * @param {number} time The time interval in milliseconds
+     */
+    private startInterval(time: number = 900): void {
+        if (!this.intervalId) {
+            this.intervalId = setInterval(() => {
+                this.drop();
+            }, time);
+        }
+    }
+
+    /**
+     * Stop the currently active interval.
+     */
+    private stopInterval() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = undefined; // Reset the interval ID
+        }
+    }
+
+    private drop() {
+        let updatedPiece = this.moves["ArrowDown"](this.piece);
+        let { shape, x, y } = updatedPiece;
+        let canMove = this.gameService.canMove(shape, { x, y });
+        if (canMove) {
+            this.pieceService.move(shape, { x, y });
+            // redraw the grid after each moved to maintain the grid state
+            this.gameService.renderGrid(this.ctx!);
+        }
+    }
+
 }
