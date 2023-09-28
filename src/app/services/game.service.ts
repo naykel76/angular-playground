@@ -44,6 +44,19 @@ export class GameService {
         });
     }
 
+    lock(matrix: Matrix, position: IPosition): void {
+        const currentGrid = this.gridSubject$.value;
+        matrix.forEach((row, rowIndex) => {
+            row.forEach((tetVal, columnIndex) => {
+                if (tetVal > 0) {
+                    let x = position.x + columnIndex;
+                    let y = position.y + rowIndex;
+                    currentGrid![y][x] = tetVal;
+                }
+            });
+        });
+    }
+
     private isInBoundary(position: IPosition): boolean {
         return position.x >= 0
             && position.x < this.config.columns
